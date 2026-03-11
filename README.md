@@ -77,10 +77,18 @@ online-exam-system/
 2. **Configure Connection**:
    Update your `src/main/resources/application.properties` with your MySQL credentials:
    ```properties
-   spring.datasource.url=jdbc:mysql://localhost:3306/online_exam_system
-   spring.datasource.username=root
-   spring.datasource.password=yourpassword
+   # -- Database --
+   spring.datasource.url=jdbc:mysql://localhost:3306/examdb
+   spring.datasource.username=${DB_USERNAME:root}
+   spring.datasource.password=${DB_PASSWORD:Dipen@3575}
+
+   # -- JPA / Hibernate --
    spring.jpa.hibernate.ddl-auto=update
+   spring.jpa.show-sql=true
+   spring.jpa.open-in-view=false
+
+   # -- Server --
+   server.port=8080
    ```
 
 ---
