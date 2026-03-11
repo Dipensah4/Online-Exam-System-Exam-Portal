@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Exam | ExamPortal</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar(activePage='exams')}"></div>
+
+
+    <div class="container">
+        <!-- Removed Back to Exam List button -->
+
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <h2 style="margin-bottom: 2rem; text-align: center;">Edit Exam Information</h2>
+            
+            <form th:action="@{/admin/edit-exam}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input type="hidden" name="id" th:value="${exam.id}">
+                
+                <div class="form-group">
+                    <label>Exam Title</label>
+                    <input type="text" name="title" th:value="${exam.title}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" th:text="${exam.description}" rows="3"></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Duration (Minutes)</label>
+                        <input type="number" name="duration" th:value="${exam.duration}" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Passing Standard</label>
+                        <select name="passingPercentage" required>
+                            <option value="33" th:selected="${exam.passingPercentage == 33}">33% (Standard)</option>
+                            <option value="50" th:selected="${exam.passingPercentage == 50}">50% (Strict)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Update Scheduled Date</label>
+                    <input type="date" name="examDate" th:value="${exam.examDate}" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                    💾 Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

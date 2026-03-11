@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | ExamPortal</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="global-bg-gradient"></div>
+    <div th:replace="~{fragments/navbar :: navbar(activePage='dashboard')}"></div>
+
+
+    <div class="container">
+        <div class="card" style="background: white; border: 1px solid #e2e8f0; border-left: 6px solid #2563eb; margin-bottom: 3rem; padding: 2.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div style="width: 70px; height: 70px; background: #f8fafc; color: #2563eb; border-radius: 50%; border: 2px solid #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800;" th:text="${#authentication.name != null && !#authentication.name.isEmpty() ? #strings.substring(#authentication.name,0,1).toUpperCase() : 'S'}">S</div>
+                <div>
+                    <h1 style="font-size: 2.2rem; margin-bottom: 0.25rem; margin-top: 0; color: #0f172a; font-weight: 800; letter-spacing: -0.02em;">Welcome back, <span th:text="${#authentication.name}">Student</span></h1>
+                    <p style="color: #64748b; font-size: 1rem; max-width: 600px; margin: 0;">Welcome to your student portal. Take exams and view your results here.</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+            <div class="card hover-float" style="padding: 1.5rem; text-align: center; background: white; border: 1px solid #e2e8f0;">
+                <div id="stat-available" style="font-size: 2.5rem; font-weight: 800; color: #2563eb;" th:text="${availableExams != null ? availableExams : 0}">0</div>
+                <div style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 0.5rem; letter-spacing: 0.05em;">Available Exams</div>
+            </div>
+            <div class="card hover-float" style="padding: 1.5rem; text-align: center; background: white; border: 1px solid #e2e8f0;">
+                <div id="stat-completed" style="font-size: 2.5rem; font-weight: 800; color: #10b981;" th:text="${completedExams != null ? completedExams : 0}">0</div>
+                <div style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 0.5rem; letter-spacing: 0.05em;">Completed Exams</div>
+            </div>
+            <div class="card hover-float" style="padding: 1.5rem; text-align: center; background: white; border: 1px solid #e2e8f0;">
+                <div id="stat-avg" style="font-size: 2.5rem; font-weight: 800; color: #6366f1;" th:text="${avgScore != null ? avgScore + '%' : '—'}">—</div>
+                <div style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 0.5rem; letter-spacing: 0.05em;">Average Score</div>
+            </div>
+        </div>
+
+        <h2 style="margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.05em;">Quick Access</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+            <div class="card hover-float" style="background: white; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+                <h3 style="margin-bottom: 0.5rem; color: #0f172a; font-weight: 700;">Take Exams</h3>
+                <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5; flex: 1;">View and start new exams.</p>
+                <a href="/student/exams" class="btn btn-primary" style="width: 100%; text-transform: uppercase; letter-spacing: 0.05em;">Browse Exams</a>
+            </div>
+
+            <div class="card hover-float" style="background: white; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+                <h3 style="margin-bottom: 0.5rem; color: #0f172a; font-weight: 700;">My Results</h3>
+                <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5; flex: 1;">View scores and answers for exams you have completed.</p>
+                <a href="/student/results" class="btn btn-secondary" style="width: 100%; text-transform: uppercase; letter-spacing: 0.05em;">View History</a>
+            </div>
+
+            <div class="card hover-float" style="background: white; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+                <h3 style="margin-bottom: 0.5rem; color: #0f172a; font-weight: 700;">Account Settings</h3>
+                <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5; flex: 1;">Update your personal information and mobile contact details.</p>
+                <a href="/student/profile" class="btn btn-secondary" style="width: 100%; text-transform: uppercase; letter-spacing: 0.05em;">Manage Profile</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateStats() {
+            fetch('/student/stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('stat-available').innerText = data.availableExams || 0;
+                    document.getElementById('stat-completed').innerText = data.completedExams || 0;
+                    document.getElementById('stat-avg').innerText = data.avgScore ? data.avgScore + '%' : '—';
+                })
+                .catch(err => console.error('Failed to fetch stats:', err));
+        }
+        // Poll every 30 seconds
+        setInterval(updateStats, 30000);
+        // Initial load
+        updateStats();
+    </script>
+</body>
+</html>

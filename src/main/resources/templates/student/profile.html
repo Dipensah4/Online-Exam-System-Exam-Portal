@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | ExamPortal</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body { 
+            overflow: hidden; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            background: #f1f5f9; 
+        }
+        .main-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            flex: 1;
+            overflow: hidden;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .sidebar {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .content-area {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            overflow-y: auto;
+        }
+        .form-section-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+        .profile-photo-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+        }
+        .profile-photo {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .photo-upload-label {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--primary);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid white;
+            transition: all 0.2s;
+        }
+        .photo-upload-label:hover {
+            transform: scale(1.1);
+            background: #2563eb;
+        }
+        #photo-input {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar(activePage='profile')}"></div>
+
+    <div class="main-layout fade-in-up">
+        <aside class="sidebar">
+            <div class="profile-photo-container">
+                <img th:src="${student.user.profilePhoto != null ? '/profile/photo/' + student.user.username : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}" 
+                     class="profile-photo" alt="Student Avatar">
+                <label for="photo-input" class="photo-upload-label" title="Change Photo">
+                    <img src="https://cdn-icons-png.flaticon.com/512/685/685655.png" width="16" style="filter: invert(1);">
+                </label>
+                <form id="photo-form" th:action="@{/profile/upload}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <input type="file" id="photo-input" name="photo" accept="image/*" onchange="document.getElementById('photo-form').submit()">
+                </form>
+            </div>
+            <h2 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem;" th:text="${student.name}">Student Name</h2>
+            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 0;">Student Account</p>
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #f1f5f9; width: 100%;">
+                <div style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Role</div>
+                <div style="font-weight: 700; margin-top: 0.25rem;">Student</div>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <h3 class="form-section-title">Personal Information</h3>
+                
+                <!-- Success Message -->
+                <div th:if="${successMsg}" class="alert alert-success" style="background: #ecfdf5; color: #065f46; padding: 1rem; border-radius: 12px; border: 1px solid #a7f3d0; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" width="20" height="20">
+                    <span th:text="${successMsg}" style="font-weight: 600; font-size: 0.9rem;"></span>
+                </div>
+
+                <!-- Error Message -->
+                <div th:if="${errorMsg}" class="alert alert-danger" style="background: #fef2f2; color: #991b1b; padding: 1rem; border-radius: 12px; border: 1px solid #fecaca; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/190/190406.png" width="20" height="20">
+                    <span th:text="${errorMsg}" style="font-weight: 600; font-size: 0.9rem;"></span>
+                </div>
+
+                <form th:if="${student != null}" th:action="@{/student/profile/update}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" name="name" th:value="${student.name}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile Number</label>
+                            <input type="tel" name="mobileNumber" th:value="${student.mobileNumber}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 0.5rem;">
+                        <label>Username (Cannot be changed)</label>
+                        <input type="text" th:value="${#authentication.name}" disabled style="background: #f8fafc; cursor: not-allowed; border-color: #e2e8f0; color: #94a3b8;">
+                    </div>
+
+                    <div style="margin-top: 2rem; display: flex; align-items: center; gap: 1.5rem; border-top: 1px solid var(--border); padding-top: 2rem;">
+                        <button type="submit" class="btn btn-success" style="padding: 1rem 2.5rem;">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+
+                <div th:if="${student == null}" class="alert alert-warning" style="background: #fffbeb; color: #92400e; padding: 2rem; border-radius: 12px; border: 1px solid #fef3c7; text-align: center;">
+                    <p style="font-weight: 600; margin-bottom: 0;">Sorry, we couldn't load your profile data.</p>
+                    <p style="font-size: 0.85rem; margin-top: 0.5rem; color: #b45309;">Please try logging out and back in.</p>
+                </div>
+        </main>
+    </div>
+
+</body>
+</html>

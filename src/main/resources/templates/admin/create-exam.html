@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Exam | ExamPortal</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar(activePage='exams')}"></div>
+
+
+    <div class="container">
+        <!-- Removed Back to Exam List button -->
+
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <h2 style="margin-bottom: 2rem; text-align: center;">Create New Exam</h2>
+            
+            <form th:action="@{/admin/create-exam}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                
+                <div class="form-group">
+                    <label>Exam Title</label>
+                    <input type="text" name="title" placeholder="e.g. Java Advanced Certification" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" placeholder="Briefly describe the exam content..." rows="3"></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Duration (Minutes)</label>
+                        <input type="number" name="duration" placeholder="60" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Passing Standard</label>
+                        <select name="passingPercentage" required>
+                            <option value="33" selected>33% (Standard)</option>
+                            <option value="50">50% (Strict)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Exam Scheduled Date</label>
+                    <input type="date" name="examDate" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                    🚀 Create Exam & Add Questions
+                </button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

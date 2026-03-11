@@ -1,0 +1,242 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Students | ExamPortal</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body { 
+            overflow: hidden; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            background: white; 
+        }
+        .main-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            flex: 1;
+            overflow: hidden;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            box-sizing: border-box;
+        }
+        .sidebar {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: #f8fafc;
+        }
+        .sidebar-content {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            gap: 1.5rem;
+        }
+        .search-container {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+        .data-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .table-header {
+            background: #f8fafc;
+            display: grid;
+            grid-template-columns: 60px 1.5fr 1fr 1fr 120px;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .table-row {
+            display: grid;
+            grid-template-columns: 60px 1.5fr 1fr 1fr 120px;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            align-items: center;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .table-row:hover { background: #f8fafc; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body style="background: white;">
+    <div class="global-bg-gradient"></div>
+    <div th:replace="~{fragments/navbar :: navbar(activePage='students')}"></div>
+
+    <div class="main-layout fade-in-up">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2 style="font-size: 1.25rem; font-weight: 800;">Manage Students</h2>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">View and manage registered students</p>
+            </div>
+            <div class="sidebar-content">
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div style="padding: 1.5rem; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border); border-left: 4px solid #6366f1;">
+                        <div style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.05em;">Total Students</div>
+                        <div style="font-size: 2rem; font-weight: 800; color: #0f172a;" th:text="${students.size()}">0</div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">Total students registered in the system.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <div class="search-container">
+                <div style="font-size: 1rem; font-weight: 700; color: var(--text-muted);">Search</div>
+                <input type="text" id="studentSearch" placeholder="Search by name, username or mobile..." 
+                       style="border: none; padding: 0.5rem; background: transparent; box-shadow: none; flex: 1;">
+                <div id="resultsCount" class="badge" style="background: #e2e8f0; color: #475569;">
+                    <span th:text="${students.size()}">0</span> Registered
+                </div>
+            </div>
+
+            <div class="data-card">
+                <div class="table-header">
+                    <div>#</div>
+                    <div>Student Name</div>
+                    <div>Mobile</div>
+                    <div>Username</div>
+                    <div style="text-align: right;">Action</div>
+                </div>
+                
+                <div id="studentTableBody" style="flex: 1; overflow-y: auto;">
+                    <div th:each="s, stat : ${students}" class="table-row">
+                        <div style="font-weight: 600; color: var(--text-muted);" th:text="${stat.index + 1}">1</div>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 32px; height: 32px; background: #f8fafc; border: 1px solid #e2e8f0; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem;" th:text="${#strings.substring(s.name,0,1).toUpperCase()}">S</div>
+                            <div>
+                                <div style="font-weight: 700;" th:text="${s.name}">Name</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);" th:text="${s.email}">email</div>
+                            </div>
+                        </div>
+                        <div th:text="${s.mobileNumber}">1234567890</div>
+                        <div><span class="badge" style="font-size: 0.7rem; background: #eff6ff; color: #1e4ed8;" th:text="${s.user != null ? s.user.username : '—'}">username</span></div>
+                        <div style="text-align: right;">
+                            <button class="btn hover-bright" style="background: #ef4444; color: white; padding: 0.4rem 0.7rem; font-size: 0.75rem; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;"
+                                    th:data-id="${s.id}" th:data-name="${s.name}" onclick="confirmDeleteStudent(this)">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div th:if="${students == null or students.isEmpty()}" id="noResults" style="padding: 5rem; text-align: center; color: var(--text-muted);">
+                        <p>No student records found.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    const searchInput = document.getElementById('studentSearch');
+    const tableBody = document.getElementById('studentTableBody');
+    const resultsCount = document.getElementById('resultsCount').querySelector('span');
+    let searchTimeout;
+
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        const query = e.target.value;
+        searchTimeout = setTimeout(() => {
+            fetch(`/admin/students/search?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    renderTable(data);
+                    resultsCount.innerText = data.length;
+                });
+        }, 300);
+    });
+
+    function renderTable(students) {
+        if (!students.length) {
+            tableBody.innerHTML = `<div style="padding: 5rem; text-align: center; color: var(--text-muted);"><p>No matching records found.</p></div>`;
+            return;
+        }
+
+        tableBody.innerHTML = students.map((s, index) => `
+            <div class="table-row">
+                <div style="font-weight: 600; color: var(--text-muted);">${index + 1}</div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 32px; height: 32px; background: #f8fafc; border: 1px solid #e2e8f0; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem;">${s.name.charAt(0).toUpperCase()}</div>
+                    <div>
+                        <div style="font-weight: 700;">${s.name}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${s.email || ''}</div>
+                    </div>
+                </div>
+                <div>${s.mobileNumber || ''}</div>
+                <div><span class="badge" style="font-size: 0.7rem; background: #eff6ff; color: #1e4ed8;">${s.user ? s.user.username : '—'}</span></div>
+                <div style="text-align: right;">
+                    <button class="btn hover-bright" style="background: #ef4444; color: white; padding: 0.4rem 0.7rem; font-size: 0.75rem; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;"
+                            onclick="confirmDeleteStudent({dataset: {id: '${s.id}', name: '${s.name}'}})">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function confirmDeleteStudent(btn) {
+        const studentId = btn.dataset.id;
+        const studentName = btn.dataset.name;
+        Swal.fire({
+            title: 'Confirm Deletion',
+            html: `Are you sure you want to delete <b>"${studentName}"</b>?<br>This cannot be undone.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#94a3b8',
+            reverseButtons: true,
+            borderRadius: '12px'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/admin/delete-student/${studentId}`;
+                const csrfToken = document.querySelector('input[name="_csrf"]')?.value || '[[${_csrf.token}]]';
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_csrf';
+                csrfInput.value = csrfToken;
+                form.appendChild(csrfInput);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    }
+    </script>
+</body>
+</html>

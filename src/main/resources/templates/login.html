@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | ExamPortal</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: white;
+            color: #0f172a;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .hero-bg-gradient {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 80% -20%, rgba(37, 100, 235, 0.213) 0%, transparent 50%),
+                        radial-gradient(circle at 20% 120%, rgba(56, 191, 248, 0.356) 0%, transparent 50%);
+            z-index: -1;
+        }
+        .auth-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            color: #0f172a;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 450px;
+            padding: 3rem;
+        }
+        .form-group label {
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .form-group input {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            font-family: inherit;
+        }
+        .form-group input::placeholder {
+            color: #94a3b8;
+        }
+        .form-group input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+            outline: none;
+        }
+        .btn-primary-hero {
+            background: #2563eb;
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+            font-family: inherit;
+        }
+        .btn-primary-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+            background: #1d4ed8;
+        }
+        .text-link {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .text-link:hover {
+            color: #1e3a8a;
+        }
+        .back-link {
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+        .back-link:hover {
+            color: #0f172a;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-bg-gradient"></div>
+    <main style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1rem; position: relative; z-index: 10;">
+        <div class="auth-card">
+            <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; text-align: center; font-weight: 800; letter-spacing: -0.02em; color: #1e3a8a;">Welcome</h2>
+            <p style="color: #64748b; margin-bottom: 2.5rem; text-align: center; line-height: 1.5;">Student And Admin Login</p>
+
+            <div th:if="${param.error}" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; text-align: center;">
+                <span style="color: #ef4444; font-size: 0.85rem; font-weight: 600;">Invalid username or password.</span>
+            </div>
+            <div th:if="${param.logout}" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; text-align: center;">
+                <span style="color: #16a34a; font-size: 0.85rem; font-weight: 600;">You have logged out safely.</span>
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="e.g. user_name" required autofocus autocomplete="username">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="btn-primary-hero">
+                    Login
+                </button>
+            </form>
+
+            <div style="margin-top: 2rem; text-align: center; font-size: 0.9rem; color: #64748b;">
+                Don't have an account? <a href="/register" class="text-link">Register here</a>
+            </div>
+
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; text-align: center;">
+                <a href="/" class="back-link">
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script th:if="${param.registered}">
+        Swal.fire({
+            title: 'Registration Successful!',
+            text: 'You can now login with your credentials.',
+            icon: 'success',
+            confirmButtonColor: '#2563eb',
+            confirmButtonText: 'Great!'
+        });
+    </script>
+</body>
+</html>

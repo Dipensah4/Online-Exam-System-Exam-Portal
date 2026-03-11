@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Exams | ExamPortal</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body { 
+            overflow: hidden; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            background: #f1f5f9; 
+        }
+        .main-layout {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            flex: 1;
+            overflow: hidden;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            box-sizing: border-box;
+        }
+        .sidebar {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: #f8fafc;
+        }
+        .sidebar-content {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            gap: 1.5rem;
+        }
+        .search-container {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+        .exam-grid {
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            padding-bottom: 2rem;
+        }
+        .exam-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .exam-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+        .status-dot {
+            width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px;
+        }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 8px; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar(activePage='exams')}"></div>
+
+
+    <div class="main-layout">
+        <!-- Sidebar: Form Section -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2 id="form-title" style="font-size: 1.25rem;">Create Exam</h2>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Fill out the details to create an exam.</p>
+            </div>
+            <div class="sidebar-content">
+                <form id="examForm">
+                    <input type="hidden" id="exam-id" name="id">
+                    
+                    <div class="form-group">
+                        <label>Exam Title</label>
+                        <input type="text" id="title" name="title" placeholder="e.g. Java Advanced Certification" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="description" name="description" placeholder="Briefly describe the exam content..." rows="3"></textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Duration (Min)</label>
+                            <input type="number" id="duration" name="duration" placeholder="60" required min="1">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Pass %</label>
+                            <select id="passingPercentage" name="passingPercentage" required>
+                                <option value="33" selected>33%</option>
+                                <option value="40">40%</option>
+                                <option value="50">50%</option>
+                                <option value="60">60%</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Exam Scheduled Date</label>
+                        <input type="date" id="examDate" name="examDate" required>
+                    </div>
+
+                    <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+                        <button type="submit" id="submit-btn" class="btn btn-success" style="flex: 1;">
+                            Save Exam
+                        </button>
+                        <button type="button" id="cancel-btn" class="btn btn-secondary" style="display: none;" onclick="resetForm()">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Content: Search & List Section -->
+        <main class="content-area">
+            <div class="search-container">
+                <div style="display: flex; align-items: center; gap: 0.75rem; flex: 1;">
+                    <div style="font-size: 1rem; font-weight: 700; color: var(--text-muted);">Search</div>
+                    <input type="text" id="searchInput" placeholder="Search exams by title..." 
+                           style="flex: 1; border: none; padding: 0.5rem; background: transparent; box-shadow: none; outline: none; margin-bottom: 0;">
+                </div>
+                <div class="badge" style="background: #e2e8f0; color: #475569; white-space: nowrap;">
+                    <span id="resultsCount" th:text="${exams != null ? exams.size() : 0}">0</span> Exams
+                </div>
+            </div>
+
+            <div class="exam-grid" id="examList">
+                <div th:each="exam : ${exams}" class="exam-card" th:id="'exam-' + ${exam.id}">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                            <h3 style="font-size: 1.1rem; margin: 0;" th:text="${exam.title}">Exam Title</h3>
+                            <span class="badge" style="background: #eff6ff; color: #1d4ed8;" th:text="${exam.duration + ' min'}">60 min</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" 
+                           th:text="${exam.description != null ? exam.description : 'No description provided.'}">Description</p>
+                    </div>
+                    
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted);">
+                            <div style="display: flex; align-items: center;">
+                                <span class="status-dot" style="background: #10c537;"></span>
+                                <span th:text="${exam.questions != null ? exam.questions.size() : 0} + ' Questions'">0 Questions</span>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                Date: <span th:text="${exam.examDate != null ? exam.examDate : 'Not Set'}" style="margin-left: 4px;">Date</span>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 0.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                            <button class="btn btn-outline btn-sm" th:onclick="'editExam(' + ${exam.id} + ')'" style="flex: 1; border-color: var(--primary); color: var(--primary);">Edit</button>
+                            <a th:href="@{/admin/questions(examId=${exam.id})}" class="btn btn-primary btn-sm" style="flex: 1.5; background: #6366f1; text-align: center; display: flex; align-items: center; justify-content: center;">Manage Qs</a>
+                            <button class="btn btn-danger btn-sm" style="flex: 1;" th:onclick="'deleteExam(' + ${exam.id} + ')'">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:inline="javascript">
+        const csrfHeader = /*[[${_csrf.headerName}]]*/ 'X-CSRF-TOKEN';
+        const csrfToken = /*[[${_csrf.token}]]*/ '';
+
+        // Form Submission (Add/Update)
+        document.getElementById('examForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const isEdit = formData.get('id') !== '';
+            const url = isEdit ? '/admin/edit-exam' : '/admin/create-exam';
+            
+            try {
+                // For simplicity, we'll use form-style submission as the controller expects @RequestParam
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { [csrfHeader]: csrfToken },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    Swal.fire({
+                        title: isEdit ? 'Exam Updated!' : 'Exam Created!',
+                        icon: 'success',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                    resetForm();
+                    performSearch(); // Refresh list
+                }
+            } catch (error) {
+                console.error('Error saving exam:', error);
+            }
+        });
+
+        // Search Logic
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => performSearch(e.target.value), 300);
+        });
+
+        async function performSearch(query = '') {
+            const url = `/api/admin/exams/search?query=${encodeURIComponent(query)}`;
+            try {
+                const response = await fetch(url);
+                const exams = await response.json();
+                renderExams(exams);
+                document.getElementById('resultsCount').innerText = exams.length;
+            } catch (error) {
+                console.error('Search error:', error);
+                const grid = document.getElementById('examList');
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #ef4444;">Error loading exams. Please refresh the page.</div>';
+            }
+        }
+
+        function renderExams(exams) {
+            const grid = document.getElementById('examList');
+            if (!exams || exams.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; padding: 8rem; text-align: center; color: var(--text-muted); background: white; border-radius: 16px; border: 1px dashed var(--border);">
+                        <p style="font-size: 1.1rem; font-weight: 600;">No exams found.</p>
+                        <p style="font-size: 0.85rem; margin-top: 0.5rem;">Try adjusting your search query or creating a new exam.</p>
+                        <button class="btn btn-outline btn-sm" onclick="clearSearch()" style="margin-top: 1.5rem; padding: 0.5rem 1.5rem;">Show All Exams</button>
+                    </div>
+                `;
+                return;
+            }
+            grid.innerHTML = exams.map(exam => `
+                <div class="exam-card" id="exam-${exam.id}">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                            <h3 style="font-size: 1.1rem; margin: 0;">${exam.title}</h3>
+                            <span class="badge" style="background: #eff6ff; color: #1d4ed8;">${exam.duration} min</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            ${exam.description || 'No description provided.'}
+                        </p>
+                    </div>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted);">
+                            <div style="display: flex; align-items: center;">
+                                <span class="status-dot" style="background: #10b981;"></span>
+                                <span>${exam.questions ? exam.questions.length : 0} Questions</span>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                Date: <span style="margin-left: 4px;">${exam.examDate || 'Not Set'}</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                            <button class="btn btn-outline btn-sm" onclick="editExam(${exam.id})" style="flex: 1; border-color: var(--primary); color: var(--primary);">Edit</button>
+                            <a href="/admin/questions?examId=${exam.id}" class="btn btn-primary btn-sm" style="flex: 1.5; background: #6366f1; text-align: center; display: flex; align-items: center; justify-content: center;">Manage Qs</a>
+                            <button class="btn btn-danger btn-sm" style="flex: 1;" onclick="deleteExam(${exam.id})">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function editExam(id) {
+            try {
+                const response = await fetch(`/api/admin/exams/${id}`);
+                const exam = await response.json();
+                
+                document.getElementById('exam-id').value = exam.id;
+                document.getElementById('title').value = exam.title;
+                document.getElementById('description').value = exam.description || '';
+                document.getElementById('duration').value = exam.duration;
+                document.getElementById('passingPercentage').value = exam.passingPercentage;
+                document.getElementById('examDate').value = exam.examDate || '';
+                
+                document.getElementById('form-title').innerText = 'Edit Exam';
+                document.getElementById('submit-btn').innerText = 'Update Exam';
+                document.getElementById('cancel-btn').style.display = 'block';
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (error) {
+                console.error('Error fetching exam details:', error);
+            }
+        }
+
+        async function deleteExam(id) {
+            const result = await Swal.fire({
+                title: 'Confirm Deletion',
+                text: "Deleting an exam will remove all associated submissions.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                confirmButtonText: 'Yes, Delete',
+                borderRadius: '16px'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`/admin/delete-exam/${id}`, {
+                        method: 'POST',
+                        headers: { [csrfHeader]: csrfToken }
+                    });
+                    if (response.ok) {
+                        Swal.fire({ title: 'Deleted!', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
+                        performSearch(document.getElementById('searchInput').value);
+                    }
+                } catch (error) {
+                    console.error('Delete error:', error);
+                }
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('examForm').reset();
+            document.getElementById('exam-id').value = '';
+            document.getElementById('form-title').innerText = 'Create Exam';
+            document.getElementById('submit-btn').innerText = 'Save Exam';
+            document.getElementById('cancel-btn').style.display = 'none';
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            performSearch('');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | ExamPortal</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="overflow: hidden; height: 100vh; background: white; display: flex; flex-direction: column;">
+    <div class="global-bg-gradient"></div>
+    <div th:replace="~{fragments/navbar :: navbar(activePage='dashboard')}"></div>
+
+    <div class="container fade-in-up" style="flex: 1; display: flex; flex-direction: column; justify-content: center; padding-top: 1rem; padding-bottom: 2rem;">
+        <div style="margin-bottom: 2.5rem; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div style="width: 60px; height: 60px; background: #eba225; color: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; box-shadow: var(--shadow);">A</div>
+                <div>
+                    <h1 style="font-size: 2.5rem; margin: 0; letter-spacing: -0.02em; font-weight: 800; color: #0f172a;">Admin Dashboard</h1>
+                    <p style="color: #64748b; font-size: 1rem; margin-top: 0.25rem;">Manage Your Online Exams And Students</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 3rem;">
+            <div class="card hover-float" style="padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; background: white; border: 1px solid #e2e8f0;">
+                <div>
+                    <div id="stat-exams" style="font-size: 2.2rem; font-weight: 800; line-height: 1; color: #2563eb;" th:text="${totalExams != null ? totalExams : 0}">0</div>
+                    <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.5rem;">Total Exams</div>
+                </div>
+            </div>
+
+            <div class="card hover-float" style="padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; background: white; border: 1px solid #e2e8f0;">
+                <div>
+                    <div id="stat-students" style="font-size: 2.2rem; font-weight: 800; line-height: 1; color: #10b95c;" th:text="${totalStudents != null ? totalStudents : 0}">0</div>
+                    <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.5rem;">Registered Students</div>
+                </div>
+            </div>
+
+            <div class="card hover-float" style="padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; background: white; border: 1px solid #e2e8f0;">
+                <div>
+                    <div id="stat-submissions" style="font-size: 2.2rem; font-weight: 800; line-height: 1; color: #6366f1;" th:text="${totalSubmissions != null ? totalSubmissions : 0}">0</div>
+                    <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.5rem;">Submissions</div>
+                </div>
+            </div>
+
+            <div class="card hover-float" style="padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; background: white; border: 1px solid #e2e8f0;">
+                <div>
+                    <div id="stat-questions" style="font-size: 2.2rem; font-weight: 800; line-height: 1; color: #ffa200;" th:text="${totalQuestions != null ? totalQuestions : 0}">0</div>
+                    <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.5rem;">Total Questions</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <h2 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.7rem; font-size: 1.2rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">
+            Quick Actions
+        </h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
+            <div class="card hover-float" style="background: white; border-radius: 20px; padding: 2rem; border: 1px solid #e2e8f0; border-top: 4px solid #2563eb; display: flex; flex-direction: column;">
+                <h3 style="font-size: 1.2rem; margin-bottom: 0.6rem; font-weight: 700; color: #0f172a;">Create Exam</h3>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.6; flex: 1;">Create a new exam and set its rules.</p>
+                <a href="/admin/exams" class="btn btn-primary" style="width: 100%;">Create Exam</a>
+            </div>
+
+            <div class="card hover-float" style="background: white; border-radius: 20px; padding: 2rem; border: 1px solid #e2e8f0; border-top: 4px solid #10b981; display: flex; flex-direction: column;">
+                <h3 style="font-size: 1.2rem; margin-bottom: 0.6rem; font-weight: 700; color: #0f172a;">Manage Questions</h3>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.6; flex: 1;">View, add, and organize exam questions.</p>
+                <a href="/admin/questions" class="btn btn-secondary" style="width: 100%;">Manage Questions</a>
+            </div>
+
+            <div class="card hover-float" style="background: white; border-radius: 20px; padding: 2rem; border: 1px solid #e2e8f0; border-top: 4px solid #f59e0b; display: flex; flex-direction: column;">
+                <h3 style="font-size: 1.2rem; margin-bottom: 0.6rem; font-weight: 700; color: #0f172a;">Manage Students</h3>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.6; flex: 1;">View student details and track their progress.</p>
+                <a href="/admin/students" class="btn btn-secondary" style="width: 100%;">View Students</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateAdminStats() {
+            fetch('/api/admin/stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('stat-exams').innerText = data.totalExams || 0;
+                    document.getElementById('stat-students').innerText = data.totalStudents || 0;
+                    document.getElementById('stat-submissions').innerText = data.totalSubmissions || 0;
+                    document.getElementById('stat-questions').innerText = data.totalQuestions || 0;
+                })
+                .catch(err => console.error('Failed to fetch admin stats:', err));
+        }
+        // Poll every 30 seconds
+        setInterval(updateAdminStats, 30000);
+        // Initial load check
+        updateAdminStats();
+    </script>
+</body>
+</body>
+</html>

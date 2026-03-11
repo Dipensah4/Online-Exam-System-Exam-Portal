@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Completed | ExamPortal</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        :root {
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --accent: #6366f1;
+            --success: #22c55e;
+            --danger: #ef4444;
+        }
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+        .dashboard-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 350px 1fr 300px;
+            gap: 1.5rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .main-score-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .stats-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.25rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        .live-pulse {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+            box-shadow: 0 0 0 rgba(34, 197, 94, 0.4);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+        .score-ring {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin-bottom: 1.5rem;
+        }
+        .score-svg { transform: rotate(-90deg); }
+        .score-bg { fill: none; stroke: #f1f5f9; stroke-width: 12; }
+        .score-fill {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 12;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-out;
+            stroke-dasharray: 440;
+            stroke-dashoffset: calc(440 - (440 * var(--p)) / 100);
+        }
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-outline { border: 2px solid #e2e8f0; color: #475569; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    </style>
+</head>
+<body style="background: white;">
+    <div class="global-bg-gradient"></div>
+    <div th:replace="~{fragments/navbar :: navbar(activePage='results')}"></div>
+
+
+    <div class="dashboard-grid">
+        <!-- Profile & Status Column -->
+        <div class="stats-column">
+            <div class="stat-card" style="flex-direction: column; align-items: flex-start; text-align: left; padding: 2rem; background: white; border: 1px solid #e2e8f0; border-top: 4px solid #6366f1;">
+                <div th:if="${result.status == 'PASS'}" style="color: #10b981; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Result: PASS</div>
+                <div th:unless="${result.status == 'PASS'}" style="color: #ef4444; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Result: REVIEW</div>
+                <h2 style="margin: 0; font-size: 1.5rem; color: #0f172a; font-weight: 800;" th:text="${result.status == 'PASS' ? 'Congratulations!' : 'Exam Completed'}">Status</h2>
+                <p style="margin: 0.5rem 0 0; color: #64748b; line-height: 1.5; font-size: 0.95rem;" th:text="${result.status == 'PASS' ? 'You have successfully passed this assessment.' : 'Your answers have been processed successfully.'}"></p>
+            </div>
+
+            <div class="stat-card" style="background: white; border: 1px solid #e2e8f0; padding: 1.5rem;">
+                <div>
+                    <div style="font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Correct Answers</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: #2563eb;"><span th:text="${result.correctAnswers}">0</span> <span style="font-size: 1rem; color: #94a3b8; font-weight: 600;">/</span> <span style="font-size: 1rem; color: #64748b;" th:text="${result.totalQuestions}">0</span></div>
+                </div>
+            </div>
+
+            <div class="stat-card" style="background: white; border: 1px solid #e2e8f0; padding: 1.5rem;">
+                <div>
+                    <div style="font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Total Marks Gained</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: #10b981;"><span th:text="${result.score}">0</span> <span style="font-size: 1rem; color: #94a3b8; font-weight: 600;">/</span> <span style="font-size: 1rem; color: #64748b;" th:text="${result.totalMarks}">0</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Score Column -->
+        <div class="main-score-card" style="border: 1px solid #e2e8f0;">
+            <div class="score-ring" th:style="'--p: ' + ${result.percentage}">
+                <svg class="score-svg" viewBox="0 0 160 160" width="180" height="180">
+                    <circle class="score-bg" cx="80" cy="80" r="70"></circle>
+                    <circle class="score-fill" cx="80" cy="80" r="70"></circle>
+                </svg>
+                <div class="score-text">
+                    <div style="font-size: 2.8rem; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;" th:text="${#numbers.formatDecimal(result.percentage, 1, 1) + '%'}">0%</div>
+                    <div style="font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Overall Score</div>
+                </div>
+            </div>
+            
+            <div style="width: 100%; max-width: 400px; padding: 2rem; background: #f8fafc; border-radius: 20px; text-align: left;">
+                <h3 style="margin: 0 0 1rem; font-size: 1rem; color: #1e293b;">Performance Analysis</h3>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: #64748b; font-size: 0.9rem;">Accuracy</span>
+                        <span style="font-weight: 600; color: #1e293b;" th:text="${#numbers.formatDecimal((result.correctAnswers * 100.0 / result.totalQuestions), 1, 1) + '%'}">0%</span>
+                    </div>
+                    <div style="height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden;">
+                        <div th:style="'width: ' + ${(result.correctAnswers * 100.0 / result.totalQuestions)} + '%; height: 100%; background: var(--success); transition: width 1s;'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Standings Column -->
+        <div class="stats-column">
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 24px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span style="font-weight: 800; font-size: 1rem; color: #0f172a;">Live Standing</span>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1.25rem; border-radius: 16px;">
+                        <div style="font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Current Rank</div>
+                        <div style="font-size: 1.8rem; font-weight: 800; color: #2563eb;" id="liveRank">-</div>
+                    </div>
+                    
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1.25rem; border-radius: 16px;">
+                        <div style="font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Class Average</div>
+                        <div style="font-size: 1.8rem; font-weight: 800; color: #0f172a;" id="liveAverage">-</div>
+                    </div>
+
+                    <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 600; text-align: center; margin-top: 0.5rem;">
+                        Updates based on <span id="totalParticipants" style="color: #64748b; font-weight: 700;">-</span> total participants
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card" style="background: white; border: 1px solid #e2e8f0; border-top: 4px solid #f59e0b; padding: 1.5rem; justify-content: flex-start;">
+                <div>
+                     <div style="font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Passing Criteria</div>
+                    <div style="font-size: 1.1rem; font-weight: 800; color: #0f172a;"><span th:text="${result.exam.passingPercentage}">0</span>% Required</div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem;">
+                <a th:href="@{'/student/review/' + ${result.id}}" class="btn btn-primary" style="text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85rem; justify-content: center; padding: 1rem;">
+                    Review All Answers
+                </a>
+                <a href="/student/results" class="btn btn-outline" style="text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85rem; justify-content: center; padding: 1rem; background: white;">
+                    View All Results
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const submissionId = /*[[${result.id}]]*/ 0;
+        
+        async function updateLiveStats() {
+            try {
+                const response = await fetch(`/student/result/${submissionId}/live-stats`);
+                const data = await response.json();
+                
+                document.getElementById('liveRank').innerText = `#${data.rank}`;
+                document.getElementById('liveAverage').innerText = `${data.average}%`;
+                document.getElementById('totalParticipants').innerText = data.totalParticipants;
+            } catch (error) {
+                console.error('Error fetching live stats:', error);
+            }
+        }
+
+        updateLiveStats();
+        setInterval(updateLiveStats, 15000);
+
+        const isSuccess = [[${submissionSuccess != null}]];
+        if (isSuccess) {
+            Swal.fire({
+                title: 'Submission Received!',
+                text: 'Your exam data has been safely recorded in our system.',
+                icon: 'success',
+                confirmButtonColor: '#6366f1',
+                confirmButtonText: 'Great'
+            });
+        }
+        /*]]>*/
+    </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Exams | ExamPortal</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar(activePage='dashboard')}"></div>
+
+
+    <div class="container">
+        <!-- Removed Back to Dashboard button -->
+
+        <div class="page-header" style="margin-bottom: 3rem;">
+            <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Available Exams</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Choose an exam to begin. You can only take each exam once.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem;">
+            <div th:each="exam : ${exams}" class="card" 
+                 th:style="${completedExamIds != null and completedExamIds.contains(exam.id)} ? 'opacity: 0.85; border-color: #e2e8f0;' : ''">
+                
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+                    <div style="width: 48px; height: 48px; background: var(--bg-soft); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                        <span th:text="${completedExamIds != null and completedExamIds.contains(exam.id) ? 'Completed' : 'Draft'}" style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--primary);">Draft</span>
+                    </div>
+                    
+                    <span th:if="${completedExamIds != null and completedExamIds.contains(exam.id)}" 
+                          class="badge" style="background: #dcfce7; color: #166534;">Completed</span>
+                    
+                    <th:block th:unless="${completedExamIds != null and completedExamIds.contains(exam.id)}">
+                        <span th:with="status=${@examStatusHelper.getStatus(exam)}">
+                            <span th:if="${status == 'Upcoming'}" class="badge" style="background: #e0e7ff; color: #4338ca;">Upcoming</span>
+                            <span th:if="${status == 'Active'}" class="badge" style="background: #fef08a; color: #854d0e;">Active</span>
+                            <span th:if="${status == 'Missed'}" class="badge" style="background: #fee2e2; color: #991b1b;">Missed</span>
+                        </span>
+                    </th:block>
+                </div>
+
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;" th:text="${exam.title}">Exam Title</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; min-height: 3rem;" 
+                   th:text="${exam.description != null and !exam.description.isEmpty() ? exam.description : 'Test your knowledge in ' + exam.title + '.'}"></p>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 2rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">
+                        Duration: <span th:text="${exam.duration + ' Mins'}">60 Mins</span>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">
+                        Questions: <span th:text="${(exam.questions != null ? exam.questions.size() : 0) + ' '}">0</span>
+                    </div>
+                </div>
+                
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem; text-align: center;">
+                    Scheduled for: <span th:text="${exam.examDate}"></span>
+                </div>
+
+                <div th:if="${completedExamIds == null or !completedExamIds.contains(exam.id)}">
+                    <a th:href="@{/student/take-exam/{id}(id=${exam.id})}" class="btn btn-primary" style="width: 100%; text-align: center;">
+                        Start Exam Now
+                    </a>
+                </div>
+                <div th:if="${completedExamIds != null and completedExamIds.contains(exam.id)}">
+                    <a href="/student/results" class="btn btn-secondary" style="width: 100%; text-align: center;">
+                        View Result
+                    </a>
+                </div>
+            </div>
+
+                <p style="color: var(--text-muted);">Please check back later or contact your instructor.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (urlParams.get("error") === "already_taken") {
+            Swal.fire({
+                title: "Already Taken!",
+                text: "You have already completed this exam.",
+                icon: "info",
+                confirmButtonText: "View My Results",
+                confirmButtonColor: "var(--primary)"
+            }).then(() => {
+                window.location.href = "/student/results";
+            });
+        }
+
+        if (urlParams.get("error") === "upcoming") {
+            const examDate = urlParams.get("date");
+            Swal.fire({
+                title: "Too Early!",
+                html: `This exam is scheduled for:<br><br><b>Date:</b> ${examDate}<br><br>You cannot start this exam yet.`,
+                icon: "warning",
+                confirmButtonText: "Okay",
+                confirmButtonColor: "var(--primary)"
+            }).then(() => {
+                window.history.replaceState(null, null, window.location.pathname);
+            });
+        }
+
+        if (urlParams.get("error") === "missed") {
+            Swal.fire({
+                title: "Missed Exam",
+                text: "This exam has already ended.\nStatus: MISSED",
+                icon: "error",
+                confirmButtonText: "Okay",
+                confirmButtonColor: "#ef4444"
+            }).then(() => {
+                window.history.replaceState(null, null, window.location.pathname);
+            });
+        }
+    </script>
+</body>
+</html>

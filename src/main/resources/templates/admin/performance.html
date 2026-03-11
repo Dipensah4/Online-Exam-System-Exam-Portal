@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Performance | Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background: #f1f5f9;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+        }
+        nav {
+            background: white;
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+        .dashboard-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 350px 1fr 400px;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            box-sizing: border-box;
+            max-height: calc(100vh - 70px);
+        }
+        .stats-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            overflow-y: auto;
+        }
+        .card-glass {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .badge-pass { background: #dcfce7; color: #166534; padding: 0.25rem 0.75rem; border-radius: 99px; font-weight: 600; font-size: 0.75rem; }
+        .badge-fail { background: #fee2e2; color: #991b1b; padding: 0.25rem 0.75rem; border-radius: 99px; font-weight: 600; font-size: 0.75rem; }
+        .answer-row {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            border: 1px solid #e2e8f0;
+        }
+        .correct { background: #f0fdf4; border-color: #bbf7d0; }
+        .incorrect { background: #fef2f2; border-color: #fecaca; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar(activePage='submissions')}"></div>
+
+    <div class="dashboard-container">
+        <!-- Student & Exam Info -->
+        <div class="stats-column">
+            <div class="card-glass" style="text-align: center;">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="80" alt="Student User" style="margin-bottom: 1rem;">
+                <h2 style="margin: 0; font-size: 1.25rem;" th:text="${submission.student.name}">Student Name</h2>
+                <p style="color: #64748b; margin: 0.25rem 0 1rem;" th:text="${submission.student.email}">student@email.com</p>
+                <div style="display: flex; justify-content: center; gap: 0.5rem;">
+                    <span th:class="${submission.status == 'PASS' ? 'badge-pass' : 'badge-fail'}" th:text="${submission.status}">PASS</span>
+                </div>
+            </div>
+
+            <div class="card-glass">
+                <h3 style="margin: 0 0 1rem; font-size: 1rem; color: #1e293b;">Metrics Overview</h3>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: #64748b; font-size: 0.9rem;">Final Score</span>
+                        <span style="font-weight: 700; color: #1e293b;" th:text="${#numbers.formatDecimal(submission.percentage, 1, 1) + '%'}">85%</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: #64748b; font-size: 0.9rem;">Current Rank</span>
+                        <span style="font-weight: 700; color: #3437fa;" th:text="'#' + ${rank}">#5</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: #64748b; font-size: 0.9rem;">Class Average</span>
+                        <span style="font-weight: 700; color: #1e293b;" th:text="${avg + '%'}">72%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-glass">
+                <h3 style="margin: 0 0 1rem; font-size: 1rem; color: #1e293b;">Exam Details</h3>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #64748b;">Questions</span>
+                        <span style="font-weight: 600;" th:text="${submission.totalQuestions}">20</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #64748b;">Correct</span>
+                        <span style="font-weight: 600; color: #16a34a;" th:text="${submission.correctAnswers}">17</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #64748b;">Submitted On</span>
+                        <span style="font-weight: 600;" th:text="${#temporals.format(submission.submittedAt, 'dd MMM yyyy, HH:mm')}">10 Mar 2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question Breakdown -->
+        <div class="stats-column" style="padding-right: 0.5rem;">
+            <div class="card-glass" style="margin-bottom: 0;">
+                <h3 style="margin: 0 0 1.5rem; font-size: 1.1rem; color: #1e293b;">Student Responses</h3>
+                <div th:each="answer, stat : ${answers}" class="answer-row" th:classappend="${answer.correct ? 'correct' : 'incorrect'}">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 700; color: #1e293b;" th:text="'Q' + ${stat.index + 1}">Q1</span>
+                        <span th:if="${answer.correct}" style="color: #16a34a; font-size: 0.8rem; font-weight: 700;">CORRECT</span>
+                        <span th:unless="${answer.correct}" style="color: #dc2626; font-size: 0.8rem; font-weight: 700;">INCORRECT</span>
+                    </div>
+                    <p style="margin: 0 0 1rem; color: #1e293b; font-weight: 500;" th:text="${answer.question.questionText}">Question text goes here?</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.85rem;">
+                        <div>
+                            <div style="color: #64748b; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 0.25rem;">Student Selected</div>
+                            <div style="font-weight: 700;" th:text="${answer.selectedAnswer}">Option A</div>
+                        </div>
+                        <div>
+                            <div style="color: #64748b; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 0.25rem;">Correct Answer</div>
+                            <div style="font-weight: 700; color: #16a34a;" th:text="${answer.correctAnswer}">Option B</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action & Summary -->
+        <div class="stats-column">
+            <div class="card-glass" style="background: white; color: var(--text); border: 1px solid var(--border);">
+                <h3 style="margin: 0 0 1rem; font-size: 1rem;">Admin Summary</h3>
+                <p style="font-size: 0.9rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 1.5rem;">
+                    This student performed <span style="color: var(--text); font-weight: 700;" th:text="${submission.percentage >= avg ? 'Above' : 'Below'}">Above</span> the class average. 
+                    The overall duration was <span style="color: var(--text); font-weight: 700;">Standard</span> and responses show a <span style="color: var(--text); font-weight: 700;" th:text="${submission.percentage >= 80 ? 'High' : 'Moderate'}">High</span> understanding of the material.
+                </p>
+                <div style="padding: 1rem; background: #f8fafc; border-radius: 12px; font-size: 0.85rem; color: var(--text-muted); border: 1px solid var(--border);">
+                    <div style="color: var(--text-muted); margin-bottom: 0.25rem;">Status Log</div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text);">
+                        <span style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%;"></span>
+                        Verified by System
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-glass" style="margin-top: auto;">
+                <button onclick="window.print()" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem;">
+                    Generate Report (PDF)
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error | ExamPortal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --border: #334155;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        /* Background effects */
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.5;
+            animation: float 10s ease-in-out infinite alternate;
+        }
+        .blob-1 {
+            width: 400px; height: 400px;
+            background: #4f46e5;
+            top: -100px; right: -100px;
+            border-radius: 50%;
+        }
+        .blob-2 {
+            width: 350px; height: 350px;
+            background: #ec4899;
+            bottom: -50px; left: -50px;
+            border-radius: 50%;
+            animation-delay: -5s;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .error-code {
+            font-family: 'Outfit', sans-serif;
+            font-size: 6rem;
+            font-weight: 800;
+            line-height: 1;
+            background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 10px 30px rgba(129, 140, 248, 0.3);
+        }
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #f1f5f9;
+        }
+        .error-message {
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+        .btn-home {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-home:hover {
+            background: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.5);
+        }
+        .btn-home:active {
+            transform: translateY(-1px);
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-30px) scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    
+    <div class="glass-card">
+        <div class="error-code" th:text="${errorCode != null ? errorCode : 500}">500</div>
+        <h2 class="error-title" th:text="${errorTitle != null ? errorTitle : 'Oops! Something went wrong'}">Oops! Something went wrong</h2>
+        <p class="error-message" th:text="${errorMessage != null ? errorMessage : 'The server encountered an unexpected condition that prevented it from fulfilling the request. We are looking into it.'}">Error details</p>
+        
+        <div th:if="${trace != null}" style="margin-bottom: 2rem; text-align: left; background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; font-size: 0.8rem; overflow: auto; max-height: 150px; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.05);">
+            <strong style="display:block;margin-bottom:0.5rem;color:#f87171;">System Trace:</strong>
+            <pre style="white-space: pre-wrap; word-break: break-all;" th:text="${trace}"></pre>
+        </div>
+
+        <a class="btn-home" href="/">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            Return to Dashboard
+        </a>
+    </div>
+</body>
+</html>
