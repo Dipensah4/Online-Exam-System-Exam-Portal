@@ -148,7 +148,6 @@ The system features a sophisticated scheduling engine that tracks:
 
 - [ ] **Email Notifications**: Automated alerts for schedule changes and result publications.
 - [ ] **AI Proctoring**: Integration of camera monitoring and tab-switch prevention.
-- [ ] **PDF Certificates**: Automated generation of achievement certificates.
 - [ ] **Advanced Randomization**: Unique question sequences for every student attempt.
 
 ---
