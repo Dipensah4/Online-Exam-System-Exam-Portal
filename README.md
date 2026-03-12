@@ -1,166 +1,122 @@
-# 🎓 Online Student Examination System
+# 🎓 Enterprise Online Examination System
 
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)](https://spring.io/projects/spring-boot)
-[![Java](https://img.shields.io/badge/Java-17%2B-orange)](https://www.java.com/)
-[![MySQL](https://img.shields.io/badge/MySQL-8.x-blue)](https://www.mysql.com/)
-[![Maven](https://img.shields.io/badge/Maven-3.x-red)](https://maven.apache.org/)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/Dipensah4/Online-Exam-System-Exam-Portal/graphs/commit-activity)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5+-6DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-17%2B-ED8B00?logo=openjdk&logoColor=white)](https://www.java.com/)
+[![Railway](https://img.shields.io/badge/Deploy%20on-Railway-0B0D0E?logo=railway&logoColor=white)](https://railway.app)
+[![MySQL](https://img.shields.io/badge/Database-MySQL-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
 
-A comprehensive, web-based platform designed to streamline the examination process. This system allows administrators to create and manage exams effectively, while offering students a seamless interface to register, participate in scheduled tests, and track their performance through real-time results and leaderboards.
-
----
-
-## 🚀 Key Features
-
-### 🛠 Admin Features
-- **Exam Management**: Effortlessly create, edit, schedule, and delete exams.
-- **Excel Question Import**: Batch upload questions using Excel spreadsheets to save time.
-- **Customizable Grading**: Set dynamic passing percentages and assign difficulty levels (**Easy**, **Medium**, **Hard**) with specific marks for each question.
-- **Student Monitoring**: Manage registered students and audit detailed submission histories.
-- **Real-time Leaderboard**: Monitor competitive student rankings across all examinations.
-- **Profile Management**: Update administrative details and security settings from a dedicated profile section.
-
-### 🎓 Student Features
-- **Secure Authentication**: Robust registration and login system.
-- **Interactive Dashboard**: A personalized portal showing upcoming, active, and completed exams.
-- **Real-time Evaluation**: Instant score calculation and a detailed review of submitted answers.
-- **Success Tracking**: View comprehensive performance history and global leaderboards.
-- **Dynamic Profile**: Manage personal information and track academic progress.
+An enterprise-grade, full-stack examination management platform. Built with **Spring Boot 3.5**, this system provides a secure, scalable, and highly interactive environment for educational institutions to conduct digital assessments.
 
 ---
 
-## 🛠 Technology Stack
+## 💎 Premium Experience
 
-- **Backend**: [Spring Boot](https://spring.io/projects/spring-boot) (Java)
-- **Frontend**: [Thymeleaf](https://www.thymeleaf.org/) (Template Engine), HTML5, Vanilla CSS, JavaScript (ES6+)
-- **Database**: [MySQL](https://www.mysql.com/)
-- **Build Tool**: [Maven](https://maven.apache.org/)
-- **Libraries**:
-  - **Apache POI**: For advanced Excel processing and question imports.
-  - **Spring Security**: For enterprise-grade authentication and role-based access control.
-  - **Lombok**: To reduce boilerplate code and improve maintainability.
+The system has been recently modernized to an **Enterprise Level** aesthetic, featuring:
+- **Executive Dashboards**: High-impact data visualization for both administrators and students.
+- **Glassmorphism UI**: A state-of-the-art interface using blurred backgrounds and refined shadows.
+- **Unified Design System**: A consistent, premium Slate/Blue color palette across all modules.
+- **Micro-interactivity**: Smooth transitions and hover effects for a responsive user experience.
 
 ---
 
-## 📂 Project Structure
+## 🚀 Strategic Features
+
+### 💻 Administrative Core
+- **Intelligent Exam Architect**: Create complex exams with dynamic time windows and passing criteria.
+- **Hierarchical Question Bank**: Manage vast repositories of questions with difficulty-based categorization.
+- **Enterprise Import**: High-speed batch processing of questions via Excel integration.
+- **Executive Analytics**: Real-time monitoring of student performance and submission audit logs.
+- **Competitive Leaderboards**: Dynamic ranking system to foster excellence.
+
+### 🎓 Student Hub
+- **Personalized Learning Portal**: Focused dashboard for upcoming assessments and performance history.
+- **Advanced Examination Hall**: Multi-functional test environment with real-time timers and result reviews.
+- **Secure Credentials**: Robust role-based access control protecting sensitive student data.
+- **Global Achievement Map**: Visualize progress across the curriculum through interactive scoreboards.
+
+---
+
+## 🛠 Technology Architecture
+
+| Layer | Technologies |
+| :--- | :--- |
+| **Backend** | Spring Boot 3.5, Spring Security, Spring Data JPA, Hibernate |
+| **Frontend** | Thymeleaf, Vanilla CSS (Modern CSS3), JavaScript (ES6+), Inter & Poppins Typography |
+| **Cloud/DevOps** | Docker, Multi-stage CI/CD optimization, Railway Infrastructure |
+| **Infrastructure** | MySQL 8.0, Maven 3.x |
+| **Libraries** | Apache POI (Excel Logic), Lombok, MapStruct (DTO Mapping), Springdoc OpenAPI (Swagger) |
+
+---
+
+## 📂 Architecture Overview
+
+The project follows a standard N-tier architecture, ensuring strict separation of concerns and high maintainability.
 
 ```text
 online-exam-system/
-├── src/
-│   ├── main/
-│   │   ├── java/com/exam/online_exam_system/
-│   │   │   ├── controller/      # Web Controllers (MVC & REST)
-│   │   │   ├── service/         # Business Logic Layer
-│   │   │   ├── repository/      # Data Access Objects (Spring Data JPA)
-│   │   │   ├── model/           # Entity Models (JPA/Hibernate)
-│   │   │   ├── dto/             # Data Transfer Objects
-│   │   │   ├── exception/       # Custom Exception Handlers
-│   │   │   └── util/            # Utility Helper Classes
-│   │   └── resources/
-│   │       ├── templates/       # Thymeleaf HTML Templates
-│   │       ├── static/          # CSS, JS, and UI Assets
-│   │       └── application.properties # Core System Configurations
-│   └── test/                    # Unit and Integration Tests
-├── pom.xml                      # Maven Dependency Management
-├── mvnw                         # Maven Wrapper Script
-└── README.md                    # Project Documentation
+├── Dockerfile           # Optimized Multi-stage Build Profile
+├── pom.xml              # Maven dependencies & build config
+└── src/main/java/com/exam/online_exam_system/
+    ├── config/          # System configuration & data initializers
+    ├── controller/      # Web Entry Points (Admin & Student controllers)
+    ├── dto/             # Data Transfer Objects for decoupled requests
+    ├── exception/       # Global exception handling & custom errors
+    ├── model/           # JPA Entities (Exam, Student, Question, User, etc.)
+    ├── repository/      # Data Access Layer (Spring Data JPA)
+    ├── security/        # Security configuration & user details service
+    ├── service/         # Business Logic implementation
+    ├── util/            # Helper classes and static utilities
+    └── OnlineExamSystemApplication.java # System Bootstrap
+└── src/main/resources/
+    ├── static/          # UI Assets (CSS, JS, Images)
+    ├── templates/       # Thymeleaf View Layers (Fragments, Admin, Student)
+    └── application.properties # Core system configurations
 ```
 
 ---
 
-## ⚙️ Database Setup
+## 🚀 Deployment Options
 
-1. **Create the Database**:
+### ⚡ Rapid Cloud Deployment (Railway)
+The system is pre-configured for seamless deployment on **Railway**.
+1. **GitHub Sync**: Push your code to a GitHub repository.
+2. **One-Click Deployment**: Link your repo to Railway.
+3. **Database Integration**: Railway automatically detects the stack and provides managed MySQL.
+
+### 🏠 Local Instance
+1. **Prepare Database**:
    ```sql
-   CREATE DATABASE online_exam_system;
+   CREATE DATABASE examdb;
    ```
-
-2. **Configure Connection**:
-   Update your `src/main/resources/application.properties` with your MySQL credentials:
-   ```properties
-   # -- Database --
-   spring.datasource.url=jdbc:mysql://localhost:3306/examdb
-   spring.datasource.username=${DB_USERNAME:root}
-   spring.datasource.password=${DB_PASSWORD:Dipen@3575}
-
-   # -- JPA / Hibernate --
-   spring.jpa.hibernate.ddl-auto=update
-   spring.jpa.show-sql=true
-   spring.jpa.open-in-view=false
-
-   # -- Server --
-   server.port=8080
-   ```
-
----
-
-## 🏃 How to Run the Project
-
-1. **Clone the repository**:
+2. **Environment Configuration**:
+   Update `application.properties` with your local credentials.
+3. **Boot Application**:
    ```bash
-   git clone https://github.com/Dipensah4/Online-Exam-System-Exam-Portal.git
+   ./mvnw spring-boot:run
    ```
-2. **Open the project** in your preferred IDE (e.g., IntelliJ IDEA, Eclipse, or VS Code).
-3. **Configure MySQL** as outlined in the [Database Setup](#-database-setup) section.
-4. **Build and Run**: Locate the `OnlineExamSystemApplication.java` file and run it as a Spring Boot Application.
-5. **Access the App**: Navigate to [http://localhost:8080](http://localhost:8080) in your web browser.
 
 ---
 
-## 🔑 Default Login Credentials
+## 🔑 Access Matrix
 
-| Role | Username | Password |
+| Account Type | Standard Identity | Initial Token |
 | :--- | :--- | :--- |
-| **Admin** | `admin` | `admin123` |
+| **Root Admin** | `admin` | `admin123` |
 
-
-> [!NOTE]
-> New students can register directly through the **Registration Page** and create their own accounts.
-
----
-
-## 📊 Excel Question Import Format
-
-To import questions accurately via Excel, ensure your spreadsheet follows this column configuration:
-`Question`, `OptionA`, `OptionB`, `OptionC`, `OptionD`, `CorrectAnswer`, `Difficulty`, `Marks`, `Subject`, `ExamName`.
+> [!TIP]
+> Students can register directly through the **Sign Up** page to create their personal accounts.
 
 ---
 
-## 📅 Exam Scheduling & Monitoring
+## 🤝 Authors
 
-The system features a sophisticated scheduling engine that tracks:
-- **Active Window**: Students can only access exams during the scheduled **Date**, **Start Time**, and **End Time**.
-- **Missed Exam Detection**: If an exam is not attempted within the scheduled window, the system automatically flags it as **MISSED**, ensuring integrity and accuracy in performance reporting.
-
----
-
-## 📸 Screenshots
-
-- **Login Page**: Sleek, modern authentication interface with a premium feel.
-- **Admin Dashboard**: A high-level overview of system metrics and administrative tools.
-- **Student Dashboard**: A focused portal for upcoming tasks and personal progress.
-- **Exam Page**: An interactive, distraction-free environment for test-taking.
-- **Result Page**: Comprehensive data visualization of test scores and performance.
-- **Leaderboard**: A dynamic, competitive ranking system updated in real-time.
+- **Dipen Sah** - *Core Architecture & UI Modernization*
+- **Ayush Mishra** - *Co-Author*
+- **Prakash Kumar Mahato** - *Co-Author*
+- **Ujwal Mandal** - *Co-Author*
 
 ---
 
-## 🔮 Future Improvements
-
-- [ ] **Email Notifications**: Automated alerts for schedule changes and result publications.
-- [ ] **AI Proctoring**: Integration of camera monitoring and tab-switch prevention.
-- [ ] **Advanced Randomization**: Unique question sequences for every student attempt.
-
----
-
-## ✍️ Authors
-
-Developed with ❤️ by:
-- **Dipen Sah** (Lead Developer)
-- **Ayush Mishra** (Co-Author)
-- **Prakash Kumar Mahato** (Co-Author)
-- **Ujwal Mandal** (Co-Author)
-
----
-
-## 📄 License
-This project is licensed for **educational purposes only**.
+## 📄 License & Terms
+Licensed under **Educational Commons**. Unauthorized commercial distribution is prohibited.
