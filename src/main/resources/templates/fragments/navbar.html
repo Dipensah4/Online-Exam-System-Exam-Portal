@@ -1,68 +1,91 @@
-<nav xmlns:th="http://www.thymeleaf.org" th:fragment="navbar(activePage)">
-    <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <div style="display: flex; gap: 0.25rem; margin-right: 1rem;">
-            <button onclick="history.back()" class="btn btn-outline" style="padding: 0.3rem 0.6rem; display: flex; align-items: center; justify-content: center;" title="Undo">
-                <img src="https://cdn-icons-png.flaticon.com/512/109/109618.png" width="16" alt="Undo">
+<nav xmlns:th="http://www.thymeleaf.org" th:fragment="navbar(activePage)" class="glass" style="position: sticky; top: 0; z-index: 1000; padding: 0.75rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
+    <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <a class="nav-brand" th:href="${#authorization.expression('hasRole(''ROLE_ADMIN'')') ? '/admin/dashboard' : '/student/dashboard'}">
+            <div style="width: 32px; height: 32px; background: var(--primary); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800;">E</div>
+            <span style="font-weight: 700; color: var(--slate-900); letter-spacing: -0.01em;">ExamPortal</span>
+        </a>
+        
+        <div style="display: flex; gap: 0.5rem; padding-left: 1rem; border-left: 1px solid var(--slate-200);">
+            <button onclick="history.back()" class="btn-icon" title="Go Back">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
             </button>
-            <button onclick="history.forward()" class="btn btn-outline" style="padding: 0.3rem 0.6rem; display: flex; align-items: center; justify-content: center;" title="Redo">
-                <img src="https://cdn-icons-png.flaticon.com/512/109/109617.png" width="16" alt="Redo">
+            <button onclick="history.forward()" class="btn-icon" title="Go Forward">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
             </button>
         </div>
-        <a class="nav-brand" th:href="${#authorization.expression('hasRole(''ROLE_ADMIN'')') ? '/admin/dashboard' : '/student/dashboard'}" style="margin-left: 0;">
-            <span th:text="${#authorization.expression('hasRole(''ROLE_ADMIN'')') ? 'ExamPortal' : 'ExamPortal'}">ExamPortal</span>
-        </a>
     </div>
 
     <style>
-        .nav-profile-img {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1.5px solid #fff;
+        .nav-links { display: flex; align-items: center; gap: 0.75rem; }
+        .nav-link {
+            padding: 0.5rem 0.875rem;
+            border-radius: var(--radius);
+            color: var(--slate-700);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition-base);
         }
+        .nav-link:hover { background: var(--slate-100); color: var(--primary); }
+        .nav-link.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+        
+        .btn-icon {
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--slate-200);
+            background: white;
+            color: var(--slate-600);
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+        .btn-icon:hover { background: var(--slate-50); border-color: var(--slate-300); color: var(--primary); }
+        
+        .nav-profile {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            border: 1px solid var(--slate-200);
+            background: white;
+            text-decoration: none;
+            color: var(--slate-800);
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: var(--transition-base);
+        }
+        .nav-profile:hover { border-color: var(--primary); box-shadow: var(--shadow-sm); }
+        .nav-profile img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
     </style>
 
-    <!-- Admin Links -->
-    <div class="nav-links" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-        <a href="/">Home</a>
-        <a href="/admin/dashboard" th:classappend="${activePage == 'dashboard' ? 'active' : ''}">Dashboard</a>
-        <a href="/admin/exams" th:classappend="${activePage == 'exams' ? 'active' : ''}">Exams</a>
-        <a href="/admin/questions" th:classappend="${activePage == 'questions' ? 'active' : ''}">Questions</a>
-        <a href="/admin/students" th:classappend="${activePage == 'students' ? 'active' : ''}">Students</a>
-        <a href="/admin/submissions" th:classappend="${activePage == 'submissions' ? 'active' : ''}">Submissions</a>
-        <a href="/admin/profile" th:classappend="${activePage == 'profile' ? 'active' : ''}" style="display: flex; align-items: center; gap: 0.4rem;">
-            <img th:src="${#authentication.name != null ? '/profile/photo/' + #authentication.name : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}" 
-                 class="nav-profile-img" alt="User"
-                 onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"> Profile
-        </a>
+    <div class="nav-links">
+        <!-- Admin Links -->
+        <th:block th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+            <a href="/admin/dashboard" class="nav-link" th:classappend="${activePage == 'dashboard' ? 'active' : ''}">Dashboard</a>
+            <a href="/admin/exams" class="nav-link" th:classappend="${activePage == 'exams' ? 'active' : ''}">Exams</a>
+            <a href="/admin/questions" class="nav-link" th:classappend="${activePage == 'questions' ? 'active' : ''}">Questions</a>
+            <a href="/admin/students" class="nav-link" th:classappend="${activePage == 'students' ? 'active' : ''}">Students</a>
+            <a href="/admin/profile" class="nav-profile" th:classappend="${activePage == 'profile' ? 'active' : ''}">
+                <img th:src="${#authentication.name != null ? '/profile/photo/' + #authentication.name : 'https://ui-avatars.com/api/?name=' + #authentication.name + '&background=2563eb&color=fff'}" 
+                     alt="Admin" onerror="this.src='https://ui-avatars.com/api/?name=Admin&background=2563eb&color=fff'">
+                <span th:text="${#authentication.name}">Admin</span>
+            </a>
+        </th:block>
+
+        <!-- Student Links -->
+        <th:block th:if="${#authorization.expression('hasRole(''ROLE_STUDENT'')')}">
+            <a href="/student/dashboard" class="nav-link" th:classappend="${activePage == 'dashboard' ? 'active' : ''}">Dashboard</a>
+            <a href="/student/exams" class="nav-link" th:classappend="${activePage == 'browse' ? 'active' : ''}">Browse Exams</a>
+            <a href="/student/results" class="nav-link" th:classappend="${activePage == 'results' ? 'active' : ''}">My Results</a>
+            <a href="/student/profile" class="nav-profile" th:classappend="${activePage == 'profile' ? 'active' : ''}">
+                <img th:src="${#authentication.name != null ? '/profile/photo/' + #authentication.name : 'https://ui-avatars.com/api/?name=' + #authentication.name + '&background=2563eb&color=fff'}" 
+                     alt="Student" onerror="this.src='https://ui-avatars.com/api/?name=Student&background=2563eb&color=fff'">
+                <span>Profile</span>
+            </a>
+        </th:block>
+
         <form th:action="@{/logout}" method="post" style="display:inline;">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-            <button type="submit" class="btn btn-outline" style="padding: 0.5rem 1rem;">Logout</button>
+            <button type="submit" class="btn btn-outline" style="padding: 0.4rem 0.8rem; height: 36px; border-radius: 9999px;">Logout</button>
         </form>
-    </div>
-
-    <!-- Student Links -->
-    <div class="nav-links" th:if="${#authorization.expression('hasRole(''ROLE_STUDENT'')')}">
-        <a href="/">Home</a>
-        <a href="/student/dashboard" th:classappend="${activePage == 'dashboard' ? 'active' : ''}">Dashboard</a>
-        <a href="/student/exams" th:classappend="${activePage == 'browse' ? 'active' : ''}">Browse Exams</a>
-        <a href="/student/results" th:classappend="${activePage == 'results' ? 'active' : ''}">My Results</a>
-        <a href="/student/profile" th:classappend="${activePage == 'profile' ? 'active' : ''}" style="display: flex; align-items: center; gap: 0.4rem;">
-            <img th:src="${#authentication.name != null ? '/profile/photo/' + #authentication.name : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}" 
-                 class="nav-profile-img" alt="User"
-                 onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"> Profile
-        </a>
-        <form th:action="@{/logout}" method="post" style="display:inline;">
-
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-            <button type="submit" class="btn btn-outline" style="padding: 0.5rem 1rem;">Logout</button>
-        </form>
-    </div>
-
-    <!-- Non-logged in links (optional, for index/login/register) -->
-    <div class="nav-links" th:if="${#authentication == null or #authentication.principal == 'anonymousUser'}">
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
     </div>
 </nav>
