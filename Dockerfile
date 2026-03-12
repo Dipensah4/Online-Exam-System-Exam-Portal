@@ -13,8 +13,5 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
-# Use a non-root user for better security (standard practice)
-RUN useradd -m myuser
-USER myuser
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
