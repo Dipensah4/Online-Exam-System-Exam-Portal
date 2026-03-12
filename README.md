@@ -3,7 +3,6 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/Dipensah4/Online-Exam-System-Exam-Portal/graphs/commit-activity)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5+-6DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Java](https://img.shields.io/badge/Java-17%2B-ED8B00?logo=openjdk&logoColor=white)](https://www.java.com/)
-[![Railway](https://img.shields.io/badge/Deploy%20on-Railway-0B0D0E?logo=railway&logoColor=white)](https://railway.app)
 [![MySQL](https://img.shields.io/badge/Database-MySQL-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
 
 An enterprise-grade, full-stack examination management platform. Built with **Spring Boot 3.5**, this system provides a secure, scalable, and highly interactive environment for educational institutions to conduct digital assessments.
@@ -43,8 +42,7 @@ The system has been recently modernized to an **Enterprise Level** aesthetic, fe
 | :--- | :--- |
 | **Backend** | Spring Boot 3.5, Spring Security, Spring Data JPA, Hibernate |
 | **Frontend** | Thymeleaf, Vanilla CSS (Modern CSS3), JavaScript (ES6+), Inter & Poppins Typography |
-| **Cloud/DevOps** | Docker, Multi-stage CI/CD optimization, Railway Infrastructure |
-| **Infrastructure** | MySQL 8.0, Maven 3.x |
+| **Infrastructure** | MySQL 8.0, Maven 3.x, Docker |
 | **Libraries** | Apache POI (Excel Logic), Lombok, MapStruct (DTO Mapping), Springdoc OpenAPI (Swagger) |
 
 ---
@@ -76,15 +74,9 @@ online-exam-system/
 
 ---
 
-## 🚀 Deployment Options
+## 🚀 Getting Started
 
-### ⚡ Rapid Cloud Deployment (Railway)
-The system is pre-configured for seamless deployment on **Railway**.
-1. **GitHub Sync**: Push your code to a GitHub repository.
-2. **One-Click Deployment**: Link your repo to Railway.
-3. **Database Integration**: Railway automatically detects the stack and provides managed MySQL.
-
-### 🏠 Local Instance
+### 🏠 Local Development
 1. **Prepare Database**:
    ```sql
    CREATE DATABASE examdb;

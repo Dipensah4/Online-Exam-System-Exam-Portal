@@ -32,7 +32,6 @@ public class SecurityConfig {
                         "/",
                         "/login",
                         "/register",
-                        "/health",
                         "/user/register",
                         "/css/**",
                         "/js/**",
