@@ -111,7 +111,7 @@ online-exam-system/
 | Role | Username | Password |
 | :--- | :--- | :--- |
 | **Admin** | `admin` | `admin123` |
-| **Student** | `student1` | `student123` |
+
 
 > [!NOTE]
 > New students can register directly through the **Registration Page** and create their own accounts.
