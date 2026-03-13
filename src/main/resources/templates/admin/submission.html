@@ -80,7 +80,10 @@
     <div class="main-layout fade-in-up">
         <main class="content-area">
             <div class="search-container">
-                <div style="font-size: 1rem; font-weight: 700; color: var(--text-muted);">Search</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--slate-900);" th:if="${targetStudent != null}">
+                    Submissions for <span th:text="${targetStudent.name}">Student Name</span>
+                </div>
+                <div style="font-size: 1rem; font-weight: 700; color: var(--text-muted);" th:unless="${targetStudent != null}">Search</div>
                 <input type="text" id="subSearch" placeholder="Search by student name, exam, or status..." 
                        style="border: none; padding: 0.5rem; background: transparent; box-shadow: none; flex: 1;">
             </div>

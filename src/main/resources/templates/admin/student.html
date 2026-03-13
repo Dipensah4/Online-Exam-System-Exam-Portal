@@ -68,7 +68,7 @@
         .table-header {
             background: #f8fafc;
             display: grid;
-            grid-template-columns: 60px 1.5fr 1fr 1fr 120px;
+            grid-template-columns: 60px 1.5fr 1fr 1fr 200px;
             padding: 1rem 1.5rem;
             border-bottom: 1px solid var(--border);
             font-size: 0.75rem;
@@ -79,7 +79,7 @@
         }
         .table-row {
             display: grid;
-            grid-template-columns: 60px 1.5fr 1fr 1fr 120px;
+            grid-template-columns: 60px 1.5fr 1fr 1fr 200px;
             padding: 1rem 1.5rem;
             border-bottom: 1px solid #f1f5f9;
             align-items: center;
@@ -143,7 +143,10 @@
                         </div>
                         <div th:text="${s.mobileNumber}">1234567890</div>
                         <div><span class="badge" style="font-size: 0.7rem; background: #eff6ff; color: #1e4ed8;" th:text="${s.user != null ? s.user.username : '—'}">username</span></div>
-                        <div style="text-align: right;">
+                        <div style="text-align: right; display: flex; justify-content: flex-end; gap: 0.5rem;">
+                            <a th:href="@{/admin/student/{id}/results(id=${s.id})}" class="btn" style="background: var(--primary); color: white; padding: 0.4rem 0.7rem; font-size: 0.75rem; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
+                                Show Result
+                            </a>
                             <button class="btn hover-bright" style="background: #ef4444; color: white; padding: 0.4rem 0.7rem; font-size: 0.75rem; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;"
                                     th:data-id="${s.id}" th:data-name="${s.name}" onclick="confirmDeleteStudent(this)">
                                 Delete
@@ -197,7 +200,10 @@
                 </div>
                 <div>${s.mobileNumber || ''}</div>
                 <div><span class="badge" style="font-size: 0.7rem; background: #eff6ff; color: #1e4ed8;">${s.user ? s.user.username : '—'}</span></div>
-                <div style="text-align: right;">
+                <div style="text-align: right; display: flex; justify-content: flex-end; gap: 0.5rem;">
+                    <a href="/admin/student/${s.id}/results" class="btn" style="background: var(--primary); color: white; padding: 0.4rem 0.7rem; font-size: 0.75rem; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
+                        Show Result
+                    </a>
                     <button class="btn hover-bright" style="background: #ef4444; color: white; padding: 0.4rem 0.7rem; font-size: 0.75rem; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;"
                             onclick="confirmDeleteStudent({dataset: {id: '${s.id}', name: '${s.name}'}})">
                         Delete

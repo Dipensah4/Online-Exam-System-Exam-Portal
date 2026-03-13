@@ -1,8 +1,10 @@
 package com.exam.online_exam_system.controller;
 
+import com.exam.online_exam_system.model.Student;
 import com.exam.online_exam_system.model.StudentAnswer;
 import com.exam.online_exam_system.model.Submission;
 import com.exam.online_exam_system.service.ResultService;
+import com.exam.online_exam_system.service.StudentService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class ResultController {
 
   @Autowired private ResultService resultService;
+  @Autowired private StudentService studentService;
 
   @Autowired
   private com.exam.online_exam_system.repository.SubmissionRepository submissionRepository;
@@ -31,6 +34,21 @@ public class ResultController {
   @GetMapping("/admin/submissions")
   public String submissions(Model model) {
     model.addAttribute("submissions", resultService.getAllSubmissions());
+    return "admin/submission";
+  }
+
+  /**
+   * Renders the administrative view displaying submissions for a specific student.
+   *
+   * @param id the unique identifier of the student
+   * @param model the Spring MVC model
+   * @return the view template path for the submission list
+   */
+  @GetMapping("/admin/student/{id}/results")
+  public String studentSubmissions(@PathVariable Long id, Model model) {
+    Student student = studentService.getById(id);
+    model.addAttribute("submissions", resultService.getResultsForStudent(student));
+    model.addAttribute("targetStudent", student);
     return "admin/submission";
   }
 
