@@ -28,14 +28,23 @@ public class DataInitializer {
       }
 
       // ── Ensure Admin User Exists ───────────────────────────────────────────
-      if (userRepository.findByUsername("admin") == null) {
-        User admin = new User();
+      User admin = userRepository.findByUsername("admin");
+      boolean forceReset = "true".equalsIgnoreCase(System.getenv("ADMIN_FORCE_RESET"));
+
+      if (admin == null) {
+        admin = new User();
         admin.setUsername("admin");
         admin.setPassword(passwordEncoder.encode("admin123"));
         admin.setRole(Role.ADMIN);
         admin.setRealName("System Administrator");
         userRepository.save(admin);
         System.out.println("✅ Default admin user created (username: admin, password: admin123)");
+      } else if (forceReset) {
+        // Force reset the password if the environment variable is set
+        admin.setPassword(passwordEncoder.encode("admin123"));
+        admin.setRole(Role.ADMIN);
+        userRepository.save(admin);
+        System.out.println("⚠️ ADMIN_FORCE_RESET is TRUE: Admin password has been reset to 'admin123'");
       }
     };
   }
