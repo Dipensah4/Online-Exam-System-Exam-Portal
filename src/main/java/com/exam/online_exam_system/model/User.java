@@ -3,7 +3,7 @@ package com.exam.online_exam_system.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "app_users")
 public class User {
 
   @Id
@@ -25,7 +25,6 @@ public class User {
   private String mobileNumber;
   
   @Lob
-  @Column(columnDefinition = "LONGBLOB")
   private byte[] profilePhoto;
   
   private String profilePhotoType;
