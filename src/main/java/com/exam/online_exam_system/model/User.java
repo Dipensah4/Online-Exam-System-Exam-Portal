@@ -26,6 +26,7 @@ public class User {
 
   private String mobileNumber;
   
+  @Column(name = "profile_photo_v2")
   @JdbcTypeCode(Types.VARBINARY)
   private byte[] profilePhoto;
   
