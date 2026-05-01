@@ -15,21 +15,25 @@ public class DataInitializer {
   @Bean
   CommandLineRunner initAdmin(UserRepository userRepository, PasswordEncoder passwordEncoder) {
     return args -> {
-      // Find any plaintext passwords and encode them
+      // ── Fix: Robust password encoding check ────────────────────────────────
+      // Avoid re-encoding already hashed passwords (checking for common BCrypt prefixes)
       List<User> users = userRepository.findAll();
       for (User u : users) {
-        if (u.getPassword() != null && !u.getPassword().startsWith("$2a$")) {
-          u.setPassword(passwordEncoder.encode(u.getPassword()));
+        String pwd = u.getPassword();
+        if (pwd != null && !pwd.startsWith("$2a$") && !pwd.startsWith("$2b$") && !pwd.startsWith("$2y$")) {
+          u.setPassword(passwordEncoder.encode(pwd));
           userRepository.save(u);
           System.out.println("✅ Encoded plaintext password for user: " + u.getUsername());
         }
       }
 
+      // ── Ensure Admin User Exists ───────────────────────────────────────────
       if (userRepository.findByUsername("admin") == null) {
         User admin = new User();
         admin.setUsername("admin");
         admin.setPassword(passwordEncoder.encode("admin123"));
         admin.setRole(Role.ADMIN);
+        admin.setRealName("System Administrator");
         userRepository.save(admin);
         System.out.println("✅ Default admin user created (username: admin, password: admin123)");
       }
