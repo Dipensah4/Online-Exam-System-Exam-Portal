@@ -1,6 +1,8 @@
 package com.exam.online_exam_system.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import java.sql.Types;
 
 @Entity
 @Table(name = "app_users")
@@ -24,7 +26,7 @@ public class User {
 
   private String mobileNumber;
   
-  @Lob
+  @JdbcTypeCode(Types.VARBINARY)
   private byte[] profilePhoto;
   
   private String profilePhotoType;
